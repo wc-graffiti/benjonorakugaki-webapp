@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  spot_id: 1
+  name: MyString
+  lat: 9.99
+  lon: 9.99
+
+two:
+  spot_id: 1
+  name: MyString
+  lat: 9.99
+  lon: 9.99
