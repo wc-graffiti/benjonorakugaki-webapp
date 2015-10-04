@@ -21,5 +21,11 @@ test:
   database: db/test.sqlite3
 
 production:
-  <<: *default
-  database: db/production.sqlite3
+  adapter: postgresql
+  host: localhost
+  encoding: utf8
+  database: wcg_app_db
+  username: wcgadmin
+  password: wcgadmin
+  pool: 5
+  timeout: 5000

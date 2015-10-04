@@ -1,0 +1,16 @@
+!!! 5
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title Virtual RAKUGAKI for TUT CARNIVAL
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+    = stylesheet_link_tag    'http://yui.yahooapis.com/pure/0.6.0/pure-min.css', media: 'all', 'data-turbolinks-track' => true
+    = javascript_include_tag 'application', 'data-turbolinks-track' => true
+    = javascript_include_tag '//maps.google.com/maps/api/js?v=3.13&amp;sensor=false&amp;libraries=geometry', 'data-turbolinks-track' => true
+    = javascript_include_tag '//google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.14/src/markerclusterer_packed.js', 'data-turbolinks-track' => true
+    = csrf_meta_tags
+  %body
+    = yield
+
+    %footer
+      %p &copy; Copyright 2015 - WC Graffiti. All rights reserved.

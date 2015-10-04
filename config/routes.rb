@@ -1,9 +1,7 @@
 Rails.application.routes.draw do
-  get 'achievement/index'
-
-  get 'board/index'
-
-  get 'map/index'
+  get 'achievement' => 'achievement#index'
+  get 'board' =>  'board#index'
+  get 'map' => 'map#index'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -1,2 +1,22 @@
-%h1 Map#index
-%p Find me in app/views/map/index.html.haml
+%div{style: 'width:800pxi;'}
+  #map{style: 'width: 800px; height: 400px;'}
+
+
+:javascript
+  handler = Gmaps.build('Google');
+  handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
+    markers = handler.addMarkers([
+      {
+        "lat": #{Constants::TUTLAT},
+        "lng": #{Constants::TUTLON},
+        "picture": {
+          "url": "http://www.clker.com/cliparts/U/Q/d/9/V/E/orange-pin-hi.png",
+          "width":  36,
+          "height": 36
+        },
+        "infowindow": "hello!"
+      }
+    ]);
+    handler.bounds.extendWith(markers);
+    handler.fitMapToBounds();
+  });

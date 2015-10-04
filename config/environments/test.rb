@@ -39,4 +39,7 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  config.web_console.whitelisted_ips = %w(192.168.5.0/24 127.0.0.1)
+  config.web_console.automount = true
 end
