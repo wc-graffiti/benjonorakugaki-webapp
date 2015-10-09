@@ -1,5 +1,97 @@
 %p
   = @spot_id
 
-%canvas#draw-area{width: "300px", height: "300px"}<
-  図形を表示するには、canvasタグをサポートしたブラウザが必要です。
+.canvas-container
+  %canvas#draw-area{width: "480", height: "640"}<
+    図形を表示するには、canvasタグをサポートしたブラウザが必要です。
+
+%button.pure-button#undo-btn
+  UNDO
+
+:coffee
+  canvas = $('#draw-area')
+  drawlist = []
+  pathlist = []
+  ctx = canvas[0].getContext('2d')
+  ctx.lineWidth = 6
+  
+  ctx.putPoint = (x, y)-> # x,yに点を描画
+    @.beginPath()
+    @.arc(x, y, @.lineWidth / 2.0, 0, Math.PI*2, false)
+    @.fill()
+    @.closePath()
+  
+  ctx.drawLine = (sx, sy, ex, ey)-> # 始点(sx, sy) から 終点(ex, ey)に線を描画
+    @.beginPath()
+    @.moveTo(sx, sy)
+    @.lineTo(ex, ey)
+    @.stroke()
+    @.closePath()
+  
+  ctx.savePrevData = ->
+    @.prevImageData = @.getImageData(0, 0, canvas.width(), canvas.height())
+
+  mousedown = false
+  canvas.mousedown (e)->
+    ctx.savePrevData()
+    rect = this.getBoundingClientRect()
+    ctx.prevPos =
+      x: e.pageX - rect.left;
+      y: e.pageY - rect.top;
+    mousedown = true
+    drawlist.push($.extend(true, {}, ctx.prevPos))
+    ctx.putPoint(ctx.prevPos.x, ctx.prevPos.y)
+  
+  canvas.mousemove (e)->
+    return unless mousedown
+    rect = this.getBoundingClientRect()
+    nowPos =
+      x: e.pageX - rect.left;
+      y: e.pageY - rect.top;
+    ctx.drawLine(ctx.prevPos.x, ctx.prevPos.y, nowPos.x, nowPos.y)
+    ctx.putPoint(nowPos.x, nowPos.y)
+    drawlist.push($.extend(true, {}, nowPos))
+    ctx.prevPos = nowPos
+  
+  canvas.mouseup (e)->
+    pathlist.push( ->
+      c = pathlist.length
+      
+    )
+    mousedown = false
+  canvas.mouseout (e)->
+    mousedown = false
+
+  touchdown = false
+  canvas.ontouchstart (e)->
+    ctx.savePrevData()
+    rect = this.getBoundingClientRect()
+    ctx.prevPos =
+      x: e.pageX - rect.left;
+      y: e.pageY - rect.top;
+    mousedown = true
+    drawlist.push($.extend(true, {}, ctx.prevPos))
+    ctx.putPoint(ctx.prevPos.x, ctx.prevPos.y)
+  
+  canvas.mousemove (e)->
+    return unless mousedown
+    rect = this.getBoundingClientRect()
+    nowPos =
+      x: e.pageX - rect.left;
+      y: e.pageY - rect.top;
+    ctx.drawLine(ctx.prevPos.x, ctx.prevPos.y, nowPos.x, nowPos.y)
+    ctx.putPoint(nowPos.x, nowPos.y)
+    drawlist.push($.extend(true, {}, nowPos))
+    ctx.prevPos = nowPos
+  
+  canvas.mouseup (e)->
+    pathlist.push( ->
+      c = pathlist.length
+      
+    )
+    mousedown = false
+  canvas.mouseout (e)->
+    mousedown = false
+
+  $("#undo-btn").click ->
+    ctx.putImageData(ctx.prevImageData, 0, 0)
