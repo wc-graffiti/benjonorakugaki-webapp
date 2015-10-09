@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   get 'achievement' => 'achievement#index'
-  get 'board' =>  'board#index'
+  get 'board/:id' =>  'board#index'
   get 'map' => 'map#index'
 
   # The priority is based upon order of creation: first created -> highest priority.

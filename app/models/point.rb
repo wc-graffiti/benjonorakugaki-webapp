@@ -1,7 +1,7 @@
 class Point < ActiveRecord::Base
   has_many :userpoints, dependent: :destroy
 
-  # $B99?7%a%=%C%I(B $B4pK\E*$K8F$P$J$$!%=i4|2=$N;~$N$_!%(B
+  # 更新メソッド 基本的に呼ばない．初期化の時のみ．
   def self.renew
    require 'net/http'
    require 'uri'

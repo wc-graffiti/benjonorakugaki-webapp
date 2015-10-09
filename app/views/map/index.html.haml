@@ -5,18 +5,7 @@
 :javascript
   handler = Gmaps.build('Google');
   handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
-    markers = handler.addMarkers([
-      {
-        "lat": #{Constants::TUTLAT},
-        "lng": #{Constants::TUTLON},
-        "picture": {
-          "url": "http://www.clker.com/cliparts/U/Q/d/9/V/E/orange-pin-hi.png",
-          "width":  36,
-          "height": 36
-        },
-        "infowindow": "hello!"
-      }
-    ]);
+    markers = handler.addMarkers(#{raw @hash.to_json});
     handler.bounds.extendWith(markers);
     handler.fitMapToBounds();
     handler.getMap().setZoom(18);
