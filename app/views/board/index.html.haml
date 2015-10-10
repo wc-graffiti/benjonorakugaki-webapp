@@ -1,12 +1,12 @@
-%p
-  = @spot_id
-
 .canvas-container
-  %canvas#draw-area{width: "480", height: "640"}<
+  %canvas#draw-area<
     図形を表示するには、canvasタグをサポートしたブラウザが必要です。
 
 %button.pure-button#undo-btn
   UNDO
+
+%button.pure-button.pure-button-primary#rakugaki-btn
+  RAKUGAKI
 
 :coffee
   canvas = $('#draw-area')
@@ -14,6 +14,9 @@
   pathlist = []
   ctx = canvas[0].getContext('2d')
   ctx.lineWidth = 6
+
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight-20;
   
   ctx.putPoint = (x, y)-> # x,yに点を描画
     @.beginPath()
@@ -21,7 +24,7 @@
     @.fill()
     @.closePath()
   
-  ctx.drawLine = (sx, sy, ex, ey)-> # 始点(sx, sy) から 終点(ex, ey)に線を描画
+  ctx.drawLine = (sx, sy, ex, ey)-> # 始点(sx, sy)から 終点(ex, ey)に線を描画
     @.beginPath()
     @.moveTo(sx, sy)
     @.lineTo(ex, ey)
@@ -30,6 +33,14 @@
   
   ctx.savePrevData = ->
     @.prevImageData = @.getImageData(0, 0, canvas.width(), canvas.height())
+    
+  background = new Image
+  background.src = 'http://27.120.85.147:4649/api/v1/board/#{@spot_id}'
+  background.crosaOrigin = "Anonymous"
+  background.onload = ->
+    ctx.drawImage background, 0, 0
+    return
+
 
   mousedown = false
   canvas.mousedown (e)->
@@ -54,44 +65,61 @@
     ctx.prevPos = nowPos
   
   canvas.mouseup (e)->
-    pathlist.push( ->
-      c = pathlist.length
-      
-    )
-    mousedown = false
-  canvas.mouseout (e)->
-    mousedown = false
-
-  touchdown = false
-  canvas.ontouchstart (e)->
-    ctx.savePrevData()
-    rect = this.getBoundingClientRect()
-    ctx.prevPos =
-      x: e.pageX - rect.left;
-      y: e.pageY - rect.top;
-    mousedown = true
-    drawlist.push($.extend(true, {}, ctx.prevPos))
-    ctx.putPoint(ctx.prevPos.x, ctx.prevPos.y)
-  
-  canvas.mousemove (e)->
     return unless mousedown
-    rect = this.getBoundingClientRect()
-    nowPos =
-      x: e.pageX - rect.left;
-      y: e.pageY - rect.top;
-    ctx.drawLine(ctx.prevPos.x, ctx.prevPos.y, nowPos.x, nowPos.y)
-    ctx.putPoint(nowPos.x, nowPos.y)
-    drawlist.push($.extend(true, {}, nowPos))
-    ctx.prevPos = nowPos
-  
-  canvas.mouseup (e)->
-    pathlist.push( ->
-      c = pathlist.length
-      
-    )
-    mousedown = false
-  canvas.mouseout (e)->
+    color = parseInt("FFFFFFF", 16)
+    c = pathlist.length
+    drawlist.unshift(color)
+    drawlist.unshift(c)
+    pathlist.push($.extend(true, [], drawlist))
+    drawlist = []
     mousedown = false
 
+  canvas.mouseout (e)->
+    return unless mousedown
+    color = parseInt("FFFFFFFF", 16)
+    c = pathlist.length
+    drawlist.unshift(color)
+    drawlist.unshift(c)
+    pathlist.push($.extend(true, [], drawlist))
+    drawlist = []
+    mousedown = false
+  
   $("#undo-btn").click ->
     ctx.putImageData(ctx.prevImageData, 0, 0)
+    pathlist.pop
+    pathlist.length -= 1
+
+  $("#rakugaki-btn").click ->
+    data = {}
+    try
+      uuid = "#{@uuid}"
+      data["uuid"] = uuid
+      width = canvas.width()
+      data["width"] = width
+      height = canvas.height()
+      data["height"] = height
+
+      for i in [0..pathlist.length-1]
+        datastr = "["
+        pathstr = "path" + pathlist[i].shift()
+        color = pathlist[i].shift()
+        datastr += color
+        pathlist[i].length -= 2
+        for j in [0..pathlist[i].length-1]
+          str = pathlist[i][j].x + " " + pathlist[i][j].y
+          datastr += "," + str
+        datastr += "]"
+        data[pathstr] = datastr
+      
+      $.post('http://27.120.85.147:4649/api/v1/board/#{@spot_id}', data).done((param) ->
+        alert '成功: ' + param
+        return
+      ).fail ->
+        alert '失敗: ' + arguments[2]
+        return
+  
+    catch error
+      console.error error
+    finally
+      pathlist = []
+

@@ -1,8 +1,9 @@
-%div{style: 'width:800px;'}
-  #map{style: 'width: 800px; height: 400px;'}
+%div{width: "600px"}
+  #map{style: "width: 600px; height: 960px;"}
 
 :coffee
-  handler = Gmaps.build('Google') handler.buildMap {
+  handler = Gmaps.build('Google')
+  handler.buildMap {
     provider: {}
     internal: id: 'map'
   }, ->
