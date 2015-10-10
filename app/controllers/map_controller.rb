@@ -8,18 +8,18 @@ class MapController < ApplicationController
       marker.lng point.lon
       if userpoints.blank? || userpoints.find_by(point_id: point.id).blank?
         pin = {
-          url: 'http://192.168.5.2:3000/assets/pin1.png',
+          url: 'http://virtual-rakugaki.com/assets/pin1.png',
           width: 32,
           height: 32
         }
       else
         pin = {
-          url: 'http://192.168.5.2:3000/assets/pin2.png',
+          url: 'http://virtual-rakugaki.com/assets/pin2.png',
           width: 32,
           height: 32
         }
       end
-      marker.picture pin.to_json
+      marker.picture pin
       marker.infowindow "<a href=\"http://virtual-rakugaki.com/board/#{point.spot_id.to_s}\">#{point.name}</a>"
       marker.json({title: point.name})
     end
